@@ -64,11 +64,15 @@ speedBindings={
         'e':(1,1.1),
         'c':(1,.9),
     }
+def isData():
+    return select.select([sys.stdin], [], [], 0.05) == ([sys.stdin], [], [])
 
 def getKey():
     tty.setraw(sys.stdin.fileno())
-    select.select([sys.stdin], [], [], 0)
-    key = sys.stdin.read(1)
+    # select.select([sys.stdin], [], [], 0)
+    key = None
+    if isData():
+        key = sys.stdin.read(1)
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
 
@@ -100,10 +104,10 @@ if __name__=="__main__":
                 y = moveBindings[key][1]
                 z = moveBindings[key][2]
                 th = moveBindings[key][3]
-                print("x: %f, y: %f, z: %f, th: %f" %(x,y,z,th))
             elif key in speedBindings.keys():
                 speed = speed * speedBindings[key][0]
                 turn = turn * speedBindings[key][1]
+
                 print(vels(speed,turn))
                 if (status == 14):
                     print(msg)
